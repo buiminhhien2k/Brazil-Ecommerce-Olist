@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: t1_bronze
+    schema: T1_BRONZE
+    tables:
+      - name: geolocation
+        identifier: OLIST_GEOLOCATION_DATASET
+      - name: customers
+        identifier: OLIST_CUSTOMERS_DATASET
+      - name: orders
+        identifier: OLIST_ORDERS_DATASET
+      - name: order_items
+        identifier: OLIST_ORDER_ITEMS_DATASET
+      - name: order_payments
+        identifier: OLIST_ORDER_PAYMENTS_DATASET
+      - name: order_reviews
+        identifier: OLIST_ORDER_REVIEWS_DATASET
+      - name: products
+        identifier: OLIST_PRODUCTS_DATASET
+      - name: sellers
+        identifier: OLIST_SELLERS_DATASET
+      - name: product_category_name_translation
+        identifier: PRODUCT_CATEGORY_NAME_TRANSLATION

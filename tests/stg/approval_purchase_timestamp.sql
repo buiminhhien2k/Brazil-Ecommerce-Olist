@@ -1,0 +1,3 @@
+SELECT order_id
+FROM T1_BRONZE.STG_ORDERS_VW
+WHERE order_purchase_timestamp > order_approved_at
