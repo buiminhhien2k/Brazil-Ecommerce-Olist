@@ -7,6 +7,7 @@ WITH date_series AS (
         ) AS date_value
     FROM TABLE(GENERATOR(ROWCOUNT => 10000))
 )
+
 SELECT
     date_value AS date_key,
     YEAR(date_value) AS year,
@@ -23,9 +24,6 @@ SELECT
     DATE_TRUNC('QUARTER', date_value) AS quarter_start_date,
     DATE_TRUNC('YEAR', date_value) AS year_start_date,
     LAST_DAY(date_value) AS month_end_date,
-    CASE
-        WHEN DAYOFWEEK(date_value) IN (1, 7) THEN TRUE
-        ELSE FALSE
-    END AS is_weekend
+    COALESCE(DAYOFWEEK(date_value) IN (1, 7), FALSE) AS is_weekend
 FROM date_series
 WHERE date_value <= CURRENT_DATE()

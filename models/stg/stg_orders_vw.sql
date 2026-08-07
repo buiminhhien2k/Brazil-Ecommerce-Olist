@@ -4,24 +4,25 @@
 ) }}
 
 
-SELECT 
-    "order_id" as order_id,
-    "customer_id" as customer_id,
-    "order_status" as order_status,
-    "order_purchase_timestamp" as order_purchase_timestamp,
-    "order_approved_at" as order_approved_at,
-    "order_delivered_carrier_date" as order_delivered_carrier_date,
-    "order_delivered_customer_date" as order_delivered_customer_date,
-    "order_estimated_delivery_date" as order_estimated_delivery_date
+SELECT
+    "order_id" AS order_id,
+    "customer_id" AS customer_id,
+    "order_status" AS order_status,
+    "order_purchase_timestamp" AS order_purchase_timestamp,
+    "order_approved_at" AS order_approved_at,
+    "order_delivered_carrier_date" AS order_delivered_carrier_date,
+    "order_delivered_customer_date" AS order_delivered_customer_date,
+    "order_estimated_delivery_date" AS order_estimated_delivery_date
 
 FROM {{ source('t1_bronze', 'orders') }}
 
 {% if is_incremental() %}
 
-where "order_purchase_timestamp" >
-(
-    select max("order_purchase_timestamp")
-    from {{ this }}
-)
+    WHERE
+        "order_purchase_timestamp"
+        > (
+            SELECT max("order_purchase_timestamp")
+            FROM {{ this }}
+        )
 
 {% endif %}
