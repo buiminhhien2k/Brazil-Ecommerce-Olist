@@ -1,5 +1,5 @@
-SELECT 
-    "review_id" as review_id,
-    "order_id" as order_id
+SELECT
+    "review_id" AS review_id,
+    "order_id" AS order_id
 FROM
     {{ source('t1_bronze', 'order_reviews') }}
