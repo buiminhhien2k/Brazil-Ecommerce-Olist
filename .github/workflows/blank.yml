@@ -19,9 +19,9 @@ jobs:
 
           cat > ~/.dbt/profiles.yml <<EOF
           brazillian_ecom:
-            target: ci
+            target: dev
             outputs:
-              ci:
+              dev:
                 type: snowflake
                 account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
                 user: ${{ secrets.SNOWFLAKE_USER }}
@@ -29,7 +29,7 @@ jobs:
                 role: ${{ secrets.SNOWFLAKE_ROLE }}
                 database: ${{ secrets.SNOWFLAKE_DATABASE }}
                 warehouse: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
-                schema: CI
+                schema: ${{ secrets.SNOWFLAKE_SCHEMA }}
                 threads: 4
           EOF
       - name: Setup Python
