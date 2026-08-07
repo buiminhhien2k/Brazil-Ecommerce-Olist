@@ -1,6 +1,6 @@
 {{ config(
     materialized='incremental',
-    unique_key='"order_id"'
+    unique_key='order_id'
 ) }}
 
 
@@ -21,7 +21,7 @@ FROM {{ source('t1_bronze', 'orders') }}
     WHERE
         "order_purchase_timestamp"
         > (
-            SELECT max(tbl_a."order_purchase_timestamp")
+            SELECT max(tbl_a.order_purchase_timestamp)
             FROM {{ this }} AS tbl_a
         )
 
