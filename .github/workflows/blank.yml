@@ -8,7 +8,7 @@ on:
 jobs:
   dbt-ci:
     runs-on: ubuntu-latest
-
+    environment: CI
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
