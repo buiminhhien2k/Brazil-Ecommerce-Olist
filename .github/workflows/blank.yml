@@ -19,9 +19,9 @@ jobs:
 
           cat > ~/.dbt/profiles.yml <<EOF
           brazillian_ecom:
-            target: dev
+            target: ci
             outputs:
-              dev:
+              ci:
                 type: snowflake
                 account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
                 user: ${{ secrets.SNOWFLAKE_USER }}
