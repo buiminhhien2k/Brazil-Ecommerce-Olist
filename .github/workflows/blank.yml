@@ -1,0 +1,37 @@
+name: dbt CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install dbt-snowflake
+          pip install sqlfluff
+          pip install sqlfluff-templater-dbt
+
+      - name: Install dbt packages
+        run: dbt deps
+
+      - name: SQLFluff lint
+        run: sqlfluff lint models/
+
+      - name: dbt parse
+        run: dbt parse
+
+      - name: dbt build
+        run: dbt build --target ci
