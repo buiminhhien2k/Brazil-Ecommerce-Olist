@@ -21,8 +21,8 @@ FROM {{ source('t1_bronze', 'orders') }}
     WHERE
         "order_purchase_timestamp"
         > (
-            SELECT max("order_purchase_timestamp")
-            FROM {{ this }}
+            SELECT max(tbl_a."order_purchase_timestamp")
+            FROM {{ this }} AS tbl_a
         )
 
 {% endif %}

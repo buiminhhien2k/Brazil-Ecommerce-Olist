@@ -13,8 +13,8 @@ WITH cte_new_orders AS (
         WHERE
             order_purchase_timestamp
             > (
-                SELECT MAX(order_purchase_timestamp)
-                FROM {{ this }}
+                SELECT MAX(tbl_b.order_purchase_timestamp)
+                FROM {{ this }} AS tbl_b
             )
 
     {% endif %}
@@ -70,8 +70,8 @@ cte_order_revenue_multi_payment AS (
         ) AS order_estimated_delivery_date,
         MAX(
             IFF(
-                payment_type <> 'voucher',
-                payment_type,
+                tbl_b.payment_type <> 'voucher',
+                tbl_b.payment_type,
                 null
             )
         ) AS main_payment_type,

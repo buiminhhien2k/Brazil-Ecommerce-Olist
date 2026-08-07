@@ -27,6 +27,10 @@ longest_city_name_cte AS (
     WHERE rn = 1
 )
 
-SELECT *
-FROM longest_city_name_cte
-INNER JOIN average_lat_lng_cte USING ("geolocation_zip_code_prefix")
+SELECT
+    tbl_a.*,
+    tbl_b.avg_lat,
+    tbl_b.avg_lng
+FROM longest_city_name_cte AS tbl_a
+INNER JOIN average_lat_lng_cte AS tbl_b
+    ON tbl_a."geolocation_zip_code_prefix" = tbl_b."geolocation_zip_code_prefix"
