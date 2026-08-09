@@ -19,13 +19,14 @@ WITH new_order_states AS (
 
     {% if is_incremental() %}
 
-    WHERE ingested_at > (
-        SELECT COALESCE(
-            MAX(ingested_at),
-            '1900-01-01'::TIMESTAMP
+        WHERE ingested_at > (
+            SELECT
+                COALESCE(
+                    MAX(this_tbl.ingested_at),
+                    '1900-01-01'::TIMESTAMP
+                )
+            FROM {{ this }} AS this_tbl
         )
-        FROM {{ this }}
-    )
 
     {% endif %}
 
@@ -36,6 +37,7 @@ order_status_events AS (
     SELECT
         order_id,
         order_status,
+        ingested_at,
 
         CASE
             WHEN order_status = 'approved'
@@ -46,20 +48,19 @@ order_status_events AS (
 
             WHEN order_status = 'delivered'
                 THEN order_delivered_customer_date
-
-            ELSE NULL
-        END AS status_at,
-
-        ingested_at,
+        END AS status_at
 
     FROM new_order_states
-    
 
 ),
 
 final AS (
 
     SELECT
+        order_id,
+        order_status,
+        status_at,
+        ingested_at,
         SHA2(
             CONCAT(
                 order_id,
@@ -72,12 +73,7 @@ final AS (
                 )
             ),
             256
-        ) AS status_history_id,
-
-        order_id,
-        order_status,
-        status_at,
-        ingested_at
+        ) AS status_history_id
 
     FROM order_status_events
 

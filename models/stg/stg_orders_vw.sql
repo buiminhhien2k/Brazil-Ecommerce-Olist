@@ -20,10 +20,11 @@ FROM {{ source('t1_bronze', 'orders') }}
 {% if is_incremental() %}
 
     WHERE "ingested_at" > (
-        SELECT COALESCE(
-            MAX(sub_tbl.ingested_at),
-            '1900-01-01'::TIMESTAMP
-        )
+        SELECT
+            COALESCE(
+                MAX(sub_tbl.ingested_at),
+                '1900-01-01'::TIMESTAMP
+            )
         FROM {{ this }} AS sub_tbl
     )
 

@@ -11,13 +11,14 @@ WITH cte_new_orders AS (
 
     {% if is_incremental() %}
 
-    WHERE ingested_at > (
-        SELECT COALESCE(
-            MAX(ingested_at),
-            '1900-01-01 00:00:00'::TIMESTAMP
+        WHERE ingested_at > (
+            SELECT
+                COALESCE(
+                    MAX(ingested_at),
+                    '1900-01-01 00:00:00'::TIMESTAMP
+                )
+            FROM {{ this }}
         )
-        FROM {{ this }}
-    )
 
     {% endif %}
 
