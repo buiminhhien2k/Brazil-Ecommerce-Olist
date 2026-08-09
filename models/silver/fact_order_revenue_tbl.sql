@@ -14,10 +14,10 @@ WITH cte_new_orders AS (
         WHERE ingested_at > (
             SELECT
                 COALESCE(
-                    MAX(ingested_at),
+                    MAX(this_tbl.ingested_at),
                     '1900-01-01 00:00:00'::TIMESTAMP
                 )
-            FROM {{ this }}
+            FROM {{ this }} AS this_tbl
         )
 
     {% endif %}
