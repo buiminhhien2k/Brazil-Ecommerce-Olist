@@ -1,6 +1,7 @@
 {{ config(
     materialized='incremental',
-    unique_key='order_id'
+    unique_key='order_id',
+    incremental_strategy='merge'
 ) }}
 
 WITH cte_new_orders AS (
@@ -10,12 +11,14 @@ WITH cte_new_orders AS (
 
     {% if is_incremental() %}
 
-        WHERE
-            order_purchase_timestamp
-            > (
-                SELECT MAX(tbl_b.order_purchase_timestamp)
-                FROM {{ this }} AS tbl_b
-            )
+        WHERE ingested_at > (
+            SELECT
+                COALESCE(
+                    MAX(this_tbl.ingested_at),
+                    '1900-01-01 00:00:00'::TIMESTAMP
+                )
+            FROM {{ this }} AS this_tbl
+        )
 
     {% endif %}
 
@@ -41,7 +44,8 @@ cte_order_revenue_single_payment AS (
             MAX(tbl_a.order_estimated_delivery_date), 'YYYY-MM-DD HH:MI:SS'
         ) AS order_estimated_delivery_date,
         MAX(tbl_b.payment_type) AS main_payment_type,
-        SUM(tbl_b.payment_value) AS revenue_payment
+        SUM(tbl_b.payment_value) AS revenue_payment,
+        MAX(tbl_a.ingested_at) AS ingested_at
     FROM cte_new_orders AS tbl_a
     LEFT JOIN {{ ref('stg_order_payments_vw') }} AS tbl_b
         ON (tbl_a.order_id = tbl_b.order_id)
@@ -75,7 +79,8 @@ cte_order_revenue_multi_payment AS (
                 null
             )
         ) AS main_payment_type,
-        SUM(tbl_b.payment_value) AS revenue_payment
+        SUM(tbl_b.payment_value) AS revenue_payment,
+        MAX(tbl_a.ingested_at) AS ingested_at
     FROM cte_new_orders AS tbl_a
     LEFT JOIN {{ ref('stg_order_payments_vw') }} AS tbl_b
         ON (tbl_a.order_id = tbl_b.order_id)
